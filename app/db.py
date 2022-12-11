@@ -9,17 +9,20 @@ from utils import (
 )
 import os
 
+
 def connect():
     return psycopg2.connect(
-        host=os.environ['POSTGRES_HOST'],
-        database=os.environ['POSTGRES_DB'],
-        user=os.environ['POSTGRES_USER'],
-        password=os.environ['POSTGRES_PASSWORD']
+        host=os.environ["POSTGRES_HOST"],
+        database=os.environ["POSTGRES_DB"],
+        user=os.environ["POSTGRES_USER"],
+        password=os.environ["POSTGRES_PASSWORD"],
     )
+
 
 def get_cursor(connection):
     cursor = connection.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     return cursor
+
 
 def save_video(filename, user, task_id):
     # Connect to the database
@@ -51,13 +54,16 @@ def get_processing_videos(user):
     # Return the results
     return results if len(results) > 0 else []
 
+
 def get_processed_videos(user):
     # Connect to the database
     connection = connect()
     cursor = get_cursor(connection)
 
     # Get the videos that are still processing
-    sql = "SELECT id, filename FROM videos WHERE task_id IS NULL AND organization_id = %s"
+    sql = (
+        "SELECT id, filename FROM videos WHERE task_id IS NULL AND organization_id = %s"
+    )
     cursor.execute(sql, (user["organization_id"],))
     results = cursor.fetchall()
 
@@ -67,6 +73,7 @@ def get_processed_videos(user):
     # Return the results
     return results if len(results) > 0 else []
 
+
 def search_videos(query, user):
     # Connect to the database
     connection = connect()
@@ -74,13 +81,18 @@ def search_videos(query, user):
 
     # Create the SQL query
     sql = """
-        SELECT videos.id, videos.filename
+        SELECT
+            id,
+            filename,
+            ts_rank_cd(vector, phraseto_tsquery(%s)) AS rank
         FROM videos
-        WHERE videos.organization_id = %s AND videos.full_captions LIKE %s AND videos.task_id IS NULL
+        WHERE organization_id = %s
+        AND task_id IS NULL
+        AND vector @@ phraseto_tsquery(%s)
     """
 
     # Execute the query
-    cursor.execute(sql, (user["organization_id"], f"%{query}%"))
+    cursor.execute(sql, (query, user["organization_id"], query))
 
     # Get the results
     results = cursor.fetchall()

@@ -60,8 +60,23 @@ services:
       - ./frontend:/app/
     ports:
       - 3000:80
-    command: nginx -g 'daemon off;'
+    command: yarn start
     env_file:
       - .prod_env
     depends_on:
       - web
+
+  # react:
+  #   restart: always
+  #   build:
+  #     context: .
+  #     dockerfile: ./compose/ReactDockerfileProd
+  #   volumes:
+  #     - ./frontend:/app/
+  #   ports:
+  #     - 3000:80
+  #   command: nginx -g 'daemon off;'
+  #   env_file:
+  #     - .prod_env
+  #   depends_on:
+  #     - web

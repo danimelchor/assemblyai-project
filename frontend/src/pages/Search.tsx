@@ -52,17 +52,17 @@ const Search = () => {
         let q = params.get("q") || "";
         setQuery(q);
 
-        // Get the search results from the server
         axios
             .get(`/search?q=${q}`)
             .then((response) => {
+                console.log(response.data.results);
                 setSearchResults(response.data.results || []);
             })
             .catch((err) => {
                 console.log("Error while searching");
                 console.log(err);
             });
-    }, []);
+    }, [window.location.hash]);
 
     return (
         <Box className={classes.root}>

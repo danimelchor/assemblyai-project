@@ -4,6 +4,7 @@ import cv2
 from flask import send_file
 from PIL import Image
 
+
 def get_first_frame(video_path):
     try:
         # Open the video (flask file object)
@@ -51,6 +52,7 @@ def dict_factory(cursor, row):
         d[col[0]] = row[idx]
     return d
 
+
 def remove_extension(filename):
     # Split by the last period
     parts = filename.split(".")
@@ -60,6 +62,7 @@ def remove_extension(filename):
 
     # Join the parts with periods
     return ".".join(parts)
+
 
 def change_extension(filename, new_ext):
     # Remove the old extension

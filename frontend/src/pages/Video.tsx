@@ -1,9 +1,10 @@
-import { Box, createStyles, Grid } from "@mantine/core";
+import { Box, createStyles, Grid, Title } from "@mantine/core";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import Captions from "../components/Captions";
 import { CaptionType } from "../types";
+import Moment from "../components/Moment";
 
 const useStyles = createStyles((theme) => ({
     root: {
@@ -12,9 +13,20 @@ const useStyles = createStyles((theme) => ({
         justifyContent: "center",
         alignItems: "center",
         height: "100vh",
+        width: "100vw",
         paddingLeft: 20,
         paddingRight: 20,
+        paddingTop: 60,
         backgroundColor: theme.colors.gray[0],
+    },
+
+    wrapper: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
+        gap: theme.spacing.xl,
+        width: "100%",
     },
 
     videoWrapper: {
@@ -30,6 +42,22 @@ const useStyles = createStyles((theme) => ({
         fontSize: 20,
         fontWeight: 500,
         color: theme.colors.red[7],
+    },
+
+    momentsWrapper: {
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        boxShadow: theme.shadows.xl,
+        border: `1px solid ${theme.colors.gray[2]}`,
+        padding: theme.spacing.md,
+        background: "white",
+    },
+
+    momentsList: {
+        display: "flex",
+        overflowX: "scroll",
+        width: "100%",
     },
 }));
 
@@ -112,34 +140,60 @@ const Video = () => {
         }
     };
 
+    const moments = captions.filter((caption) => {
+        const words = caption.text.split(" ");
+        const queryTerms = query.split(" ");
+        return words.some((word) =>
+            queryTerms.some((term) => word.toLowerCase().includes(term))
+        );
+    });
+
     return (
         <Box className={classes.root}>
             {captions && src && (
-                <Grid columns={12}>
-                    <Grid.Col span={8}>
-                        <Box className={classes.videoWrapper}>
-                            <video
-                                controls
-                                width="100%"
-                                height="100%"
-                                ref={videoRef}
-                                onPlay={() => setPlaying(true)}
-                                onPause={() => setPlaying(false)}
-                                style={{ background: "black" }}
-                            >
-                                <source src={src} type="video/mp4" />
-                            </video>
+                <Box className={classes.wrapper}>
+                    <Grid columns={12}>
+                        <Grid.Col span={8}>
+                            <Box className={classes.videoWrapper}>
+                                <video
+                                    controls
+                                    width="100%"
+                                    height="100%"
+                                    ref={videoRef}
+                                    onPlay={() => setPlaying(true)}
+                                    onPause={() => setPlaying(false)}
+                                    style={{ background: "black" }}
+                                >
+                                    <source src={src} type="video/mp4" />
+                                </video>
+                            </Box>
+                        </Grid.Col>
+                        <Grid.Col span={4}>
+                            <Captions
+                                captions={captions}
+                                second={second}
+                                setTime={setTime}
+                                query={query}
+                            />
+                        </Grid.Col>
+                    </Grid>
+                    {moments && (
+                        <Box className={classes.momentsWrapper}>
+                            <Title order={3}>Related Moments</Title>
+                            <Box className={classes.momentsList}>
+                                {moments.map((moment, key) => (
+                                    <Moment
+                                        key={key}
+                                        text={moment.text}
+                                        start={moment.start_time}
+                                        query={query}
+                                        onClick={setTime}
+                                    />
+                                ))}
+                            </Box>
                         </Box>
-                    </Grid.Col>
-                    <Grid.Col span={4}>
-                        <Captions
-                            captions={captions}
-                            second={second}
-                            setTime={setTime}
-                            query={query}
-                        />
-                    </Grid.Col>
-                </Grid>
+                    )}
+                </Box>
             )}
             {!authorized && (
                 <Box className={classes.unauthorizedText}>

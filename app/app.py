@@ -12,6 +12,7 @@ from utils import change_extension
 if os.environ.get("ENVIRONMENT", "DEVELOPMENT") == "DEVELOPMENT":
     print("Loading .env file")
     from dotenv import load_dotenv
+
     load_dotenv("../.env")
 
 app = Flask(__name__)
@@ -19,13 +20,18 @@ app.secret_key = os.environ["SECRET_KEY"].encode()
 CORS(app, supports_credentials=True)
 
 # Celery configuration
-celery = Celery("tasks", backend=os.environ["CELERY_BACKEND_URL"], broker=os.environ["CELERY_BROKER_URL"])
+celery = Celery(
+    "tasks",
+    backend=os.environ["CELERY_BACKEND_URL"],
+    broker=os.environ["CELERY_BROKER_URL"],
+)
 
 
 # Routes
 @app.route("/")
 def health():
     return "OK"
+
 
 @app.route("/upload", methods=["POST"])
 @login_required
@@ -42,7 +48,7 @@ def upload():
 
         # Process the video
         task_id = celery.send_task("tasks.process_video", args=[file.filename, user]).id
-        
+
         # Save the video to the database
         db.save_video(file.filename, user, task_id)
 
@@ -206,4 +212,4 @@ def whoami():
 
 
 if __name__ == "__main__":
-    app.run(port=5001, host='0.0.0.0', debug=True)
+    app.run(port=5001, host="0.0.0.0", debug=True)

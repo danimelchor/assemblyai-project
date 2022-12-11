@@ -1,6 +1,5 @@
 {
-  "name": "vidlib",
-  "homepage": "https://danimelchor.github.io/assemblyai-project",
+  "name": "clipsearch",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -25,12 +24,10 @@
     "web-vitals": "^2.1.0"
   },
   "scripts": {
-    "start": "BROWSER=none react-scripts start",
+    "start": "BROWSER=none PORT=80 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "predeploy": "yarn run build",
-    "deploy": "gh-pages -d build"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [

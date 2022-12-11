@@ -98,7 +98,7 @@ const Navbar = () => {
     return (
         <Box className={classes.root}>
             <Link to="/" style={titleStyle}>
-                <Title order={2}>VidLib</Title>
+                <Title order={2}>ClipSearch</Title>
                 {user && (
                     <Title
                         order={4}

@@ -1,4 +1,4 @@
-import { Box, Text, createStyles, Grid, Highlight } from "@mantine/core";
+import { Box, Text, createStyles, Grid, Highlight, Title } from "@mantine/core";
 import { useEffect } from "react";
 import { CaptionType } from "../types";
 import { hms } from "../utils";
@@ -16,6 +16,18 @@ const useStyles = createStyles((theme) => ({
         scrollBehavior: "smooth",
         boxShadow: theme.shadows.xl,
         border: `1px solid ${theme.colors.gray[2]}`,
+        position: "relative",
+        background: "white",
+    },
+
+    title: {
+        position: "sticky",
+        top: 0,
+        background: "white",
+        zIndex: 1,
+        width: "100%",
+        padding: theme.spacing.sm,
+        borderBottom: `1px solid ${theme.colors.gray[2]}`,
     },
 
     captions: {
@@ -75,7 +87,7 @@ const Line = ({ text, start, isCurrent, query, onClick }: LineType) => {
                 <span id={hms(start)}>{hms(start)}</span>
             </Grid.Col>
             <Grid.Col span={8}>
-                <Highlight highlight={query} highlightColor="orange">
+                <Highlight highlight={query.split(" ")} highlightColor="orange">
                     {text}
                 </Highlight>
             </Grid.Col>
@@ -94,6 +106,9 @@ const Captions = ({ captions, second, query, setTime }: CaptionsType) => {
 
     return (
         <Box className={classes.root}>
+            <Title order={3} className={classes.title}>
+                Transcript
+            </Title>
             {captions.map((caption, index) => {
                 const isCurrent =
                     second >= caption.start_time && second < caption.end_time;

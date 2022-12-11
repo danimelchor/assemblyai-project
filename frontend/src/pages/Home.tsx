@@ -91,7 +91,7 @@ function Home() {
             <Box className={classes.form}>
                 <Box className={classes.formWrapper}>
                     <Title order={1} className={classes.title}>
-                        VidLib
+                        ClipSearch
                     </Title>
                     <Text fz="xl" className={classes.subtitle}>
                         The intuitive video search engine.

@@ -38,3 +38,6 @@ CREATE TABLE captions (
     text TEXT NOT NULL,
     FOREIGN KEY (video_id) REFERENCES videos (id)
 );
+
+ALTER TABLE videos ADD COLUMN vector tsvector GENERATED ALWAYS AS (to_tsvector('english', full_captions)) STORED;
+CREATE INDEX videos_vector_idx ON videos USING GIN(vector);
