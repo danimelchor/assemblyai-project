@@ -1,0 +1,11 @@
+Flask==2.2.2
+Flask-Cors==3.0.10
+opencv-python==4.6.0.66
+Pillow==9.3.0
+PyJWT==2.6.0
+python-dotenv==0.21.0
+whisper @ git+https://github.com/openai/whisper.git@fd8f80c8b880dd7c284c109ca7f03dbe978bc532
+celery
+boto3
+Redis
+psycopg2-binary

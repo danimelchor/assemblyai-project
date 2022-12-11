@@ -1,0 +1,27 @@
+FROM node:14-alpine AS builder
+ENV NODE_ENV production
+
+# Add a work directory
+WORKDIR /app
+
+# Copy files
+COPY ./frontend .
+
+# Cache and Install dependencies
+RUN yarn install --production
+
+# Build the app
+RUN yarn build
+
+# Bundle static assets with nginx
+FROM nginx:1.21.0-alpine as production
+ENV NODE_ENV production
+
+# Copy built assets from builder
+COPY --from=builder /app/build /usr/share/nginx/html
+
+# Move your nginx.conf
+COPY ./frontend/nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expose port
+EXPOSE 80

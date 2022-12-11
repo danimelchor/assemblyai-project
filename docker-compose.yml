@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  web:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./compose/PythonDockerfile
+    ports:
+      - 5001:5001
+    command: python app.py
+    volumes:
+      - ./app:/app/
+    env_file:
+      - .prod_env
+    depends_on:
+      - redis
+      - db
+
+  celery:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./compose/PythonDockerfile
+    command: celery -A tasks.celery worker --loglevel=info
+    volumes:
+      - ./tasks:/app
+    env_file:
+      - .prod_env
+    depends_on:
+      - redis
+      - db
+    
+  redis:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 60 1 --loglevel warning
+
+  db:
+    image: postgres:13-alpine
+    restart: always
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data/
+      - ./initial.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=assembly_ai
+
+  react:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./compose/ReactDockerfile
+    volumes:
+      - ./frontend:/app/
+    ports:
+      - 3000:80
+    command: nginx -g 'daemon off;'
+    env_file:
+      - .prod_env
+    depends_on:
+      - web
