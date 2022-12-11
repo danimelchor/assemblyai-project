@@ -4,7 +4,7 @@ from celery import Celery
 from flask_cors import CORS
 
 import db
-import s3
+import fs
 
 from auth import get_user_from_token, login_required, login_user
 from utils import change_extension
@@ -44,7 +44,7 @@ def upload():
     files = request.files.getlist("files")
     for file in files:
         # Save actual file
-        s3.upload_file(file)
+        fs.upload_file(file)
 
         # Process the video
         task_id = celery.send_task("tasks.process_video", args=[file.filename, user]).id
@@ -115,7 +115,7 @@ def frame(video_id):
 
     # Return the video (as a response)
     filename_jpg = change_extension(video, "jpg")
-    video_url = s3.get_file_url(filename_jpg, file_type="images")
+    video_url = fs.get_file_url(filename_jpg, file_type="images")
     return {"src": video_url}
 
 
@@ -133,7 +133,7 @@ def video(video_id):
         return {"error": "You are not authorized to view this video"}, 401
 
     # Return the video (as a response)
-    video_url = s3.get_file_url(video, file_type="videos")
+    video_url = fs.get_file_url(video, file_type="videos")
     return {"src": video_url}
 
 

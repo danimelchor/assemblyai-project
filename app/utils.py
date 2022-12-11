@@ -3,6 +3,7 @@ from io import BytesIO
 import cv2
 from flask import send_file
 from PIL import Image
+import os
 
 
 def get_first_frame(video_path):
@@ -70,3 +71,7 @@ def change_extension(filename, new_ext):
 
     # Add the new extension
     return filename + "." + new_ext
+
+
+def abs_dir(filename):
+    return os.path.join(os.path.dirname(__file__), filename)

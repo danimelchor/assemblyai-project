@@ -2,23 +2,28 @@ from celery import Celery
 import os
 import db
 import ffmpeg
-import s3
+import fs
 from utils import change_extension
 from ai import transcribe_video
 
 if os.environ.get("ENVIRONMENT", "DEVELOPMENT") == "DEVELOPMENT":
     print("Loading .env file")
     from dotenv import load_dotenv
+
     load_dotenv("../.env")
 
 # Celery configuration
-celery = Celery("tasks", backend=os.environ["CELERY_BACKEND_URL"], broker=os.environ["CELERY_BROKER_URL"])
+celery = Celery(
+    "tasks",
+    backend=os.environ["CELERY_BACKEND_URL"],
+    broker=os.environ["CELERY_BROKER_URL"],
+)
 
 # Celery tasks
 @celery.task(bind=True, name="tasks.process_video")
 def process_video(celerySelf, filename, user):
     # Get the video from S3
-    video = s3.get_file(filename, file_type="videos")
+    video = fs.get_file(filename, file_type="videos")
     abs_filename = os.path.join("videos", filename)
     with open(abs_filename, "wb") as f:
         f.write(video["Body"].read())

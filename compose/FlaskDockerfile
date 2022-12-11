@@ -1,0 +1,21 @@
+# Set base image (host OS)
+FROM python:3.8-slim
+
+# Install git
+RUN apt-get update && apt-get install -y git ffmpeg nginx build-essential python3-dev
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the dependencies file to the working directory
+COPY requirements.txt .
+COPY app .
+
+# Install any dependencies
+RUN pip install -r requirements.txt
+
+# Copy the content nginx.conf to the nginx folder
+RUN mv nginx.conf /etc/nginx
+
+# Give execute permissions to the start script
+RUN chmod +x ./start.sh
