@@ -5,7 +5,6 @@ from utils import (
     hash_password,
     get_first_frame,
     extract_organization_from_email,
-    dict_factory,
 )
 import os
 

@@ -73,5 +73,5 @@ def change_extension(filename, new_ext):
     return filename + "." + new_ext
 
 
-def abs_dir(filename):
-    return os.path.join(os.path.dirname(__file__), filename)
+def abs_dir(folder, filename):
+    return os.path.join(os.path.dirname(__file__), folder, filename).replace("./", "")

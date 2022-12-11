@@ -10,9 +10,7 @@ from auth import get_user_from_token, login_required, login_user
 from utils import change_extension
 
 if os.environ.get("ENVIRONMENT", "DEVELOPMENT") == "DEVELOPMENT":
-    print("Loading .env file")
     from dotenv import load_dotenv
-
     load_dotenv("../.env")
 
 app = Flask(__name__)

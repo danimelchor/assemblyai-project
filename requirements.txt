@@ -10,3 +10,4 @@ minio
 Redis
 psycopg2-binary
 uwsgi
+urllib3

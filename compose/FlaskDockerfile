@@ -13,12 +13,3 @@ COPY app .
 
 # Install any dependencies
 RUN pip install -r requirements.txt
-
-# Copy the content nginx.conf to the nginx folder
-RUN mv nginx.conf /etc/nginx
-
-# Give execute permissions to the start script
-RUN chmod +x ./start.sh
-
-# Give permissions to python to save an open files
-RUN chmod 777 /app
