@@ -1,5 +1,5 @@
 import os
-from app.utils import abs_dir
+from utils import abs_dir
 from minio import Minio
 from utils import get_first_frame, change_extension
 
